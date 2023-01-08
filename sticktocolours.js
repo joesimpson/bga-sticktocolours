@@ -542,11 +542,15 @@ function (dojo, declare) {
             if(tokenDivId!=null){
                 this.attachToNewParent(tokenDivId,"bestOfferTokenIcon");
             }
+            //Move token from formatted div to targetted span in order to align with text :
+            var tokenSpanToKeep = dojo.query("#player_token_0_question>span")[0];
+            tokenSpanToKeep.id = "bestOfferTokenIconMoved";
+            dojo.place("bestOfferTokenIconMoved","bestOfferTokenIcon","replace"); 
         },
         updateBestOffer: function(offer){
             this.counterBestOffer.toValue(offer.count);
             var player_color = (this.gamedatas.players[offer.player_id] !=undefined) ? this.gamedatas.players[offer.player_id]['color'] : '000000';
-            dojo.query("#player_token_0_question>.icon_bid").style('color',"#"+player_color);
+            dojo.query("#bestOfferTokenIconMoved").style('color',"#"+player_color);
             dojo.style( 'biddingBestOffer', 'display', 'block' );
         },
         
@@ -729,7 +733,7 @@ function (dojo, declare) {
                 ),
                 target_placement
             );
-            this.placeOnObject("biddingCardTpl", target_placement);            
+            this.placeOnObject("biddingCardTpl", target_placement);
             this.slideToObject("biddingCardTpl", target_placement).play();
             if(marketItem!= undefined){
                 //IF the card is displayed in the market, remove it !

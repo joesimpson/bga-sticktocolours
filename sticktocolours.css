@@ -107,7 +107,7 @@
 
 #bidding_wrap{
     width: 180px;
-    height: 180px;
+    min-height: 180px;
     margin-right: 20px;
     margin-left: 20px;
     left: 30%;
@@ -116,6 +116,7 @@
 #biddingCard{
     top: 40%;
     position: relative;
+    height: 108px;
 }
 
 #myhand_wrap, #all_choiceJoker_wrap{
@@ -151,14 +152,17 @@
 
 #counterBestOffer{
     margin-left: 5px;
-    margin-right: 5px;
 }
 
+/** DEPRECATED because icon is moved (see class below)*/ 
 #bestOfferTokenIcon{
     position: relative;
     left: 120px;
     float: left;
     top: -7px;
+}
+#bestOfferTokenIconMoved{
+    line-height: 1.8em;
 }
 
 .stockitem_selected {

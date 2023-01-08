@@ -37,7 +37,7 @@
     <div id="bidding_wrap" class="whiteblock">
         <h3>{BIDDING}</h3>
         <div id="biddingBestOffer">
-            <h5>{BEST_OFFER}<span id="counterBestOffer"></span><span id="bestOfferTokenIcon"></span><h5>
+            <h5>{BEST_OFFER}<span id="counterBestOffer"></span><span id="bestOfferTokenIcon"></span></h5>
             
         </div>
         <div id="biddingCard">
@@ -101,14 +101,14 @@ var jstpl_biddingcard = '<div class="cardOnBidding" id="biddingCardTpl" style="b
 
 //Template of 1 player token Question mark "?"
 var jstpl_player_token_question = '\<div class="player_token_zone token_question_${player_id}" id="${token_div_id}" card_id=${card_id}>\
-        <span class="fa-stack icon_bid" id="bid_wrapper_${player_id}" style="color:#${player_color}">\
+        <span class="fa-stack icon_bid bid_wrapper_${player_id}" style="color:#${player_color}">\
           <i class="fa fa-circle fa-stack-1x fa-inverse"></i>\
           <i class="fa fa-question-circle fa-stack-1x "></i>\
         </span>\
     </div>';
 
 var jstpl_player_token_refuse = '\<div class="player_token_zone token_refuse_${player_id}" id="${token_div_id}" card_id=${card_id}>\
-        <span class="fa-stack icon_bid" id="bid_wrapper_${player_id}" style="color:#${player_color}">\
+        <span class="fa-stack icon_bid bid_wrapper_${player_id}" style="color:#${player_color}">\
           <i class="fa fa-circle fa-stack-1x fa-inverse"></i>\
           <i class="fa fa-times-circle fa-stack-1x "></i>\
         </span>\
