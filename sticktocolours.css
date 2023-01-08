@@ -1,0 +1,226 @@
+/**
+ *------
+ * BGA framework: © Gregory Isabelli <gisabelli@boardgamearena.com> & Emmanuel Colin <ecolin@boardgamearena.com>
+ * StickToColours implementation : © joesimpson <Your email address here>
+ *
+ * This code has been produced on the BGA studio platform for use on http://boardgamearena.com.
+ * See http://en.boardgamearena.com/#!doc/Studio for more information.
+ * -----
+ *
+ * sticktocolours.css
+ *
+ * StickToColours stylesheet
+ *
+ */
+
+/*
+    This is the CSS stylesheet of your game User Interface.
+    
+    Styles defined on this file will be applied to the HTML elements you define in your
+    HTML template (sticktocolours_sticktocolours.tpl), and to HTML elements you create dynamically
+    (in sticktocolours.js).
+    
+    Usually, you are using CSS to:
+    
+    1°) define the overall layout of your game
+        (ex: place the board on the top left, place player's hand beside, place the deck on the right, ...).
+
+    2°) create your CSS-sprites:
+        All images of your games should be gathered into a small number of image files. Then, using
+        background-image and background-position CSS properties, you create HTML blocks that can 
+        display these images correctly (see example below).
+    
+    3°) ... anything else:
+        It is really easy to add and remove CSS classes dynamically from your Javascript with
+        dojo.addClass and dojo.removeClass. It is also easy to check if an element has a class
+        (dojo.hasClass) or to get all elements with a specific class (dojo.query). This is why,
+        very often, using CSS classes for the logic of your user interface allow you to do complex
+        thing easily.
+        
+        
+     Note: on the production platform, this file will be compressed and comments will be removed.
+           Consequently, don't hesitate to put as many comments as necessary.
+*/
+
+
+/* Note: you must not use any @import directive */
+
+
+/********* You can start writing your CSS below this line: **********/
+
+
+/*
+    Example of CSS sprites (a black token and a white token, 20x20px each, embedded in the same "tokens.png" 40x20px image):
+
+    .white_token {
+        background-image: url('img/tokens.png');
+        background-position: 0px 0px;
+    }
+    .black_token {
+        background-image: url('img/tokens.png');
+        background-position: -20px 0px;
+    }
+    .token {
+        width: 20px;
+        height: 20px;
+        background-repeat: none;
+    }
+*/
+
+
+/** overloading framework whiteblock */
+#sticktocolours-container .whiteblock{
+    border-radius: 20px;
+}
+
+
+/* ------------------------------------------------------------------------------*/
+/*********************************** CENTRAL BOARD *******************************/
+/* ------------------------------------------------------------------------------*/
+#deck_market_wrap{
+    /*width: 60em;*/
+    width: 90%;
+    display: flex;
+}
+
+#deck_wrap{
+    /*width: 10em;*/
+    flex: 0.2;
+    text-align: center;
+    margin-right: 10px;
+    margin-left: 20px;
+}
+#deckView{
+    left: 30%;
+}
+
+#market_wrap{
+    /*width: 40em;*/
+    flex: 0.4;
+    margin-right: 20px;
+    margin-left: 10px;
+}
+#hand_refused_wrap{
+    flex: 0.4;
+}
+
+
+#bidding_wrap{
+    width: 180px;
+    height: 180px;
+    margin-right: 20px;
+    margin-left: 20px;
+    left: 30%;
+    position: relative;
+}
+#biddingCard{
+    top: 40%;
+    position: relative;
+}
+
+#myhand_wrap, #all_choiceJoker_wrap{
+    width: 90%;
+    margin-right: 20px;
+    margin-left: 20px;
+}
+
+.playerhand{
+    width: 90%;
+    margin-right: 20px;
+    margin-left: 20px;
+}
+
+
+.cardOnTable, .cardOnHand, .cardOnDeck, .cardOnBidding, .cardOnChoices, .cardOnHandRefused{
+    /** Tip: how to make your cards looks beautiful :) */
+    border-radius: 10px;
+    border: 1px black solid;
+    box-shadow: 5px 5px 5px 0px rgba(0,0,255,0.4);
+    background-size: 700% 500%;
+}
+.cardOnTable{
+    box-shadow: 5px 5px 5px 0px rgba(255,0,0,0.4);
+}
+.cardOnBidding{
+    position: absolute;
+    width: 75px;
+    height: 103px;
+    background-image: url('img/cards.jpg');
+}
+
+
+#counterBestOffer{
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+#bestOfferTokenIcon{
+    position: relative;
+    left: 120px;
+    float: left;
+    top: -7px;
+}
+
+.stockitem_selected {
+	border: 3px solid yellow ! important;
+}
+
+.stockitem_joker{
+    border: 3px black dashed;
+    box-shadow: 5px 5px 5px 0px rgba(255,0,0,0.7);
+}
+
+
+.possibleCard{
+    opacity: 1 !important;
+    cursor: pointer;
+}
+.notPossibleCard{
+    opacity: 0.5 !important;
+    cursor: default;
+}
+
+/* ------------------------------------------------------------------------------*/
+/*********************************** CARDS TOKENS ********************************/
+/* ------------------------------------------------------------------------------*/
+.player_token_zone{
+    width: max-content;
+   /* left: 33%; */ 
+   /* position: relative; */
+}
+
+.icon_bid{
+    /*font-size: xx-large; */
+}
+
+
+
+/* ------------------------------------------------------------------------------*/
+/*********************************** PLAYER PANEL ********************************/
+/* ------------------------------------------------------------------------------*/
+.hand_size_wrapper, .dealer_wrapper{
+    /** width to organize differents icons + displaying tooltips  */
+   width: max-content;
+   float: left;
+   padding: 2px;
+}
+.icon_handsize{
+    color: black;
+}
+.icon_dealer{
+    color: black;
+}
+
+.player-board.roundedboxdisabled{
+    background-color: #847a6f;
+}
+
+
+
+#scoreHelper{
+    width: 157px;
+    height: 232px;
+    background-image: url('img/memo_score.png');
+    background-size: 157px;
+    background-repeat: no-repeat;
+}
