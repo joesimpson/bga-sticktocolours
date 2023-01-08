@@ -130,8 +130,8 @@ function (dojo, declare) {
                 this.displayPlayerHands(gamedatas.hands,gamedatas.jokers);
             }
 
-            this.addActionButton( 'button_scoreHelp', _('Score helper'), 'onScoreHelp', 'player_boards', true, 'blue'); 
-            dojo.query("#button_scoreHelp").removeClass("blinking");//Remove framework class "blinking"
+            this.addActionButton( 'button_scoreHelp', _('Score helper'), 'onScoreHelp', 'player_boards', false, 'blue'); 
+            //dojo.query("#button_scoreHelp").removeClass("blinking");//Remove framework class "blinking" -> useless now with false on declaration
             
             //console.log( "Ending game setup" );
         },
@@ -230,7 +230,22 @@ function (dojo, declare) {
                  case 'playerTurn':
                     // Add 2 action buttons in the action status bar:
                     this.addActionButton( 'button_bid', _('Bid'), 'onBid' ); 
-                    this.addActionButton( 'button_pass_bid', _('Pass'), 'onPassBid' ); 
+                    
+                    let bestOffer = args.currentBestOffer;
+                    if(bestOffer.count == 0 && bestOffer.player_id == this.player_id){
+                        //Dealer cannot pass when he just chose a card in the market
+                        
+                        /*
+                        //disable button Pass (if it is visible):
+                        dojo.addClass('button_pass_bid', 'disabled');
+                        this.addTooltip( 'button_pass_bid', _("You cannot pass your first bid as dealer"), '' );
+                        */
+                        //+ ADD a cancel button in this case
+                        this.addActionButton( 'button_cancel_choice', _('Cancel'), 'onCancelChoice',null,false,'red' ); 
+                    }
+                    else {
+                        this.addActionButton( 'button_pass_bid', _('Pass'), 'onPassBid' ); 
+                    }
                     break;
                 }
             }
@@ -747,6 +762,17 @@ function (dojo, declare) {
                 this.market.removeFromStockById(card_id);
             }
         },
+        
+        /**
+        REVERSE ACTION of playCardOnBidding()
+        */
+        cancelCardOnBidding: function(color, value, card_id,newMarketTokens){
+            dojo.query("#biddingCardTpl").remove();
+            
+            this.market.addToStockWithId( this.getCardUniqueIdType( color, value ), card_id );
+            this.initTokensOnCard(card_id,"market");
+            this.displayTokensOnCard( newMarketTokens);
+        },
 
         updateDealer: function(dealerId){
             dojo.query(".dealer_wrapper").style( 'display', 'none' );
@@ -888,6 +914,17 @@ function (dojo, declare) {
             this.ajaxcallwrapper( "passBid",{} );
         },
         
+        onCancelChoice: function()
+        {
+            // Check that this action is possible (see "possibleactions" in states.inc.php)
+            if( ! this.checkAction( 'cancelChoice' ) )
+            {   
+                return; 
+            }
+            
+            this.ajaxcallwrapper( "cancelChoice",{} );
+        },
+        
         initScoreHelper: function()
         {
             // Create the new dialog over the play zone.
@@ -990,6 +1027,7 @@ function (dojo, declare) {
             
             dojo.subscribe( 'marketCardChosen', this, "notif_marketCardChosen" );
             dojo.subscribe( 'newDeal', this, "notif_newDeal" );
+            dojo.subscribe( 'cancelChoice', this, "notif_cancelChoice" );
             dojo.subscribe( 'passChoice', this, "notif_passChoice" );
             dojo.subscribe( 'newTokens', this, "notif_newTokens" );
             dojo.subscribe( 'bidCardFromHand', this, "notif_bidCardFromHand" );
@@ -1038,11 +1076,15 @@ function (dojo, declare) {
             this.updateBestOffer(notif.args.bestOffer);
             
         },  
+        notif_cancelChoice: function( notif )
+        {
+            this.cancelCardOnBidding(notif.args.color,notif.args.value,notif.args.card_id, notif.args.newMarketTokens);
+        },   
         notif_passChoice: function( notif )
         {
             // useless because we jump to newRound
             //this.disablePlayerPanel(notif.args.player_id);
-        },   
+        },
         notif_passBid: function( notif )
         {
             this.removeQuestionTokens(notif.args.player_id);

@@ -913,6 +913,41 @@ These functions should have been API but they are not, just add them to your php
         $this->gamestate->nextState("chooseMarketCard");
     }
     
+    /** REVERSE action of chooseMarketCard()
+    */
+    function cancelChoice()
+    {
+        self::checkAction( 'cancelChoice' ); 
+        
+        $player_id = self::getActivePlayerId();
+        
+        //Controls : active player must be dealer AND no token must have been placed AND a card must have been chosen
+        $dealer = self::getGameStateValue( 'dealer');
+        $bestOffer = self::getCurrentBestOffer();
+        $biddingCard = self::getBiddingCard(); //Should not be null at that time because of possibleActions...
+        if($bestOffer['count']>0 || $dealer != $player_id || is_null($biddingCard ) ){
+            throw new BgaVisibleSystemException(("You cannot cancel at this moment of the game"));
+        }
+        
+        $card_id = $biddingCard['id'];
+        $card_color = $biddingCard['type'];
+        $card_value = $biddingCard['type_arg'];
+        $tokens = self::dbGetAllTokens("bidding");
+        
+        //Move the card back on market area
+        $this->cards->moveCard($card_id,"market");
+        
+        self::notifyAllPlayers( "cancelChoice", clienttranslate( '${player_name} cancels the choice for the next trading' ), array(
+            'player_name' => self::getActivePlayerName(),
+            'card_id' => $card_id,
+            'value' => $card_value,
+            'color' => $card_color,
+            'newMarketTokens' => $tokens,
+        ) );
+        
+        $this->gamestate->nextState("cancelChoice");
+    }
+    
     function passChoice()
     {
         // Check that this is the player's turn and that it is a "possible action" at this game state (see states.inc.php)
@@ -940,7 +975,7 @@ These functions should have been API but they are not, just add them to your php
         
         //if player is dealer, he must bid at least 1 token before passing
         $current_trading_tokens = self::getGameStateValue( 'current_trading_tokens' );
-        if($current_trading_tokens == 0) throw new BgaUserException(self::_("You cannot pass your first bid as dealer"));
+        if($current_trading_tokens == 0) throw new BgaVisibleSystemException(("You cannot pass your first bid as dealer"));
         
         //save   "passBid" for this player
         $this->passPlayerBid($player_id);
@@ -1052,6 +1087,7 @@ These functions should have been API but they are not, just add them to your php
         self::setGameStateValue( 'current_trading_player_id', $player_id );
         self::notifyAllPlayers( "bestOffer", '', array(
             'bestOffer' => self::getCurrentBestOffer() 
+            //TODO JSA replace with state arg ?
         ) );
           
         $this->gamestate->nextState("bid");
@@ -1128,6 +1164,7 @@ These functions should have been API but they are not, just add them to your php
         $activePlayer = self::getActivePlayerId();
         // return values:
         return array(
+            'currentBestOffer' => self::getCurrentBestOffer(),
             'notBiddingPlayers' => self::getCurrentNotBiddingPlayers(),
             'possibleCardInMarket' => self::getPossibleCardsInMarket( $activePlayer),
             '_private' => array(

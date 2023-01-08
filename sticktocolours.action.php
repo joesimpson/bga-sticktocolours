@@ -54,6 +54,16 @@
 
         self::ajaxResponse( );
     }
+    
+    public function cancelChoice()
+    {
+        self::setAjaxMode();
+
+        $this->game->cancelChoice();
+
+        self::ajaxResponse();
+    }
+    
     public function passChoice()
     {
         self::setAjaxMode();     

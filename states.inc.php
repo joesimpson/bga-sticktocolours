@@ -123,8 +123,8 @@ $machinestates = array(
         "descriptionmyturn" => clienttranslate('${you} must bid or pass'),
         "type" => "activeplayer",
         "args" => "argPlayerTurn",
-        "possibleactions" => array( "bid", "passBid" ),
-        "transitions" => array( "bid" => 21, "pass" => 21, "zombiePass"=>21 )
+        "possibleactions" => array( "bid", "passBid", "cancelChoice" ),
+        "transitions" => array( "bid" => 21, "pass" => 21, "zombiePass"=>21, "cancelChoice"=>10 )
     ),
     
     21 => array(
