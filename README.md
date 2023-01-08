@@ -5,3 +5,6 @@ This code has been produced on the BGA studio platform for use on http://boardga
 
 # License
 License file is /LICENCE_BGA.
+
+# Test
+This project is tested with BrowserStack
