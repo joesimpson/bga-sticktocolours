@@ -49,6 +49,13 @@ function (dojo, declare) {
             
             //this.biddingZone = new ebg.zone(); 
             
+            //For each possible player color, we associate an icon (thanks to fontawesome icons)
+            this.colorblind_icon_map = new Map([
+                ["ff0000", 'fa-heart'],
+                ["008000", 'fa-circle'],
+                ["0000ff", 'fa-square'],
+                ["ffa500", 'fa-sun-o'],
+            ]);
         },
         
         /*
@@ -73,13 +80,21 @@ function (dojo, declare) {
             for( var player_id in gamedatas.players )
             {
                 var player = gamedatas.players[player_id];
-                         
+                var player_color ='';         
+                var player_color_icon ='';
                 var player_board_div = $('player_board_'+player_id);
+                if(player != undefined){
+                    player_color = player['color'];
+                    player_color_icon = this.colorblind_icon_map.get(player_color);
+                }
                 dojo.place(  
                     this.format_block(   
                         'jstpl_player_board_details',
                         {
-                            player_id : player_id
+                            player_id : player_id,
+                            player_color : player_color,
+                            player_color_token_shape : player_color_icon,
+                            TOKEN_SHAPE_TITLE: _("Token shape"),
                         }
                     ),
                     player_board_div
@@ -297,6 +312,7 @@ function (dojo, declare) {
                 var color = card.type;
                 var value = card.type_arg;                
                 this.market.addToStockWithId( this.getCardUniqueIdType( color, value ), card.id );
+                this.addToStockShapeColor(this.market,color,card.id);
                 
                 this.initTokensOnCard(card.id,"market");
                 
@@ -305,7 +321,7 @@ function (dojo, declare) {
             dojo.connect(this.market,"onChangeSelection",  this,'onMarketSelectionChanged' );
             
         },
-         
+        
         initHandRefusedCards: function( ) 
         {
             this.handRefused = new ebg.stock();            
@@ -340,10 +356,20 @@ function (dojo, declare) {
                 var color = card.type;
                 var value = card.type_arg;                
                 this.playerHand.addToStockWithId( this.getCardUniqueIdType( color, value ), card.id );
+                this.addToStockShapeColor(this.playerHand,color,card.id);
             }
             
             dojo.connect(this.playerHand,"onChangeSelection",  this,'onPlayerHandSelectionChanged' );
             
+        },
+        
+        addToStockShapeColor: function(stock,color,id) {
+            var divId = stock.container_div.id+"_item_"+id;
+            dojo.addClass( divId, 'cardColor-'+color );
+        },
+        addToBiddingCardShapeColor: function(color) {
+            var divId = "biddingCardTpl";
+            dojo.addClass( divId, 'cardColor-'+color );
         },
         
         updateActivePlayers: function(notBiddingPlayers){
@@ -355,7 +381,6 @@ function (dojo, declare) {
         },
         
         updatePossibleCards: function(cards, source){
-            //console.log("updatePossibleCards",cards, source);
             var stock = null;
             if(source == "market"){
                 stock = this.market;
@@ -493,10 +518,12 @@ function (dojo, declare) {
             }
             var tokenTpl = (token.state == 1) ?  'jstpl_player_token_refuse' : 'jstpl_player_token_question';
             var player_color = '';
+            var colorblind_icon = '';
             if(this.gamedatas.players[token.player_id] != undefined){
                 player_color = this.gamedatas.players[token.player_id]['color'];
                 token.player_color = player_color;
                 token.player_name = this.gamedatas.players[token.player_id]['name'];
+                colorblind_icon = this.colorblind_icon_map.get(player_color);
             }
             var divPlace = 'player_panel_details_'+token.player_id;
             if($(divPlace) == null) return null;
@@ -509,6 +536,7 @@ function (dojo, declare) {
                     player_id : token.player_id,
                     player_color : player_color,//token.player_color,
                     card_id : card_id,
+                    colorblind_icon: colorblind_icon,
                 }
               ),
               'player_panel_details_'+token.player_id
@@ -566,6 +594,16 @@ function (dojo, declare) {
             this.counterBestOffer.toValue(offer.count);
             var player_color = (this.gamedatas.players[offer.player_id] !=undefined) ? this.gamedatas.players[offer.player_id]['color'] : '000000';
             dojo.query("#bestOfferTokenIconMoved").style('color',"#"+player_color);
+            
+            //update COLORBLIND SHAPE :
+            var colorblind_icon = this.colorblind_icon_map.get(player_color);
+            var shape = dojo.query("#bestOfferTokenIconMoved>.colorblind_shape_token_background");
+            //reset shape by removing all possible icons
+            this.colorblind_icon_map.forEach((icon) => {
+                shape.removeClass( icon ); // "fa-sun-o" , etc
+            });
+            shape.addClass(colorblind_icon);
+            
             dojo.style( 'biddingBestOffer', 'display', 'block' );
         },
         
@@ -636,6 +674,8 @@ function (dojo, declare) {
                 var color = card.type;
                 var value = card.type_arg;
                 this.otherPlayerHand.addToStockWithId( this.getCardUniqueIdType( color, value ), card.id );
+                
+                this.addToStockShapeColor(this.otherPlayerHand,color,card.id);
             }
             
         },
@@ -664,6 +704,7 @@ function (dojo, declare) {
                 var card_type_id = this.getCardUniqueIdType(color,value);
                 this.cardsChoices.addItemType(card_type_id, card_type_id, g_gamethemeurl + this.cardsImage, card_type_id);
                 this.cardsChoices.addToStock( this.getCardUniqueIdType( color, value ) );
+                this.addToStockShapeColor(this.cardsChoices,color,value);
             }
             dojo.connect(this.cardsChoices,"onChangeSelection",  this,'onJokerChoicesSelectionChanged' );
         },
@@ -707,9 +748,11 @@ function (dojo, declare) {
                 target_placement = "myhand";
                 if(isAutomatic){
                     this.playerHand.addToStockWithId( this.getCardUniqueIdType( color, value ), card_id,origin_placement );
+                    this.addToStockShapeColor(this.playerHand,color,card_id);
                 }
                 else {//IF card is THE BIDDING TARGET
                     this.playerHand.addToStockWithId( this.getCardUniqueIdType( color, value ), card_id );
+                    this.addToStockShapeColor(this.playerHand,color,card_id);
                 }
             }
             else {
@@ -761,6 +804,8 @@ function (dojo, declare) {
                 //this.slideToObject(divId, target_placement).play();
                 this.market.removeFromStockById(card_id);
             }
+            
+            this.addToBiddingCardShapeColor(color);
         },
         
         /**
@@ -770,6 +815,7 @@ function (dojo, declare) {
             dojo.query("#biddingCardTpl").remove();
             
             this.market.addToStockWithId( this.getCardUniqueIdType( color, value ), card_id );
+            this.addToStockShapeColor(this.market,color,card_id);
             this.initTokensOnCard(card_id,"market");
             this.displayTokensOnCard( newMarketTokens);
         },
@@ -1096,6 +1142,7 @@ function (dojo, declare) {
         {
             //TODO JSA ANIMATION SLIDE FROM DECK
             this.market.addToStockWithId( this.getCardUniqueIdType( notif.args.color, notif.args.value ), notif.args.card_id );
+            this.addToStockShapeColor(this.market,notif.args.color,notif.args.card_id);
             this.initTokensOnCard(notif.args.card_id,"market");
             this.counterDeckSize.setValue(notif.args.deckSize);
         },  

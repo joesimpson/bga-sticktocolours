@@ -93,6 +93,7 @@ var jstpl_some_game_item='<div class="my_game_item" id="my_game_item_${MY_ITEM_I
 var jstpl_player_board_details = '\<div class="player_panel_details" id="player_panel_details_${player_id}">\
     <div id="hand_size_wrapper_${player_id}" class="hand_size_wrapper"><i class="fa fa-hand-paper-o icon_handsize" id="icon_handsize_${player_id}"></i><span id="hand_size_${player_id}">0</span> </div>\
     <div id="dealer_wrapper_${player_id}" class="dealer_wrapper"><i class="fa fa-bullseye icon_dealer" id="icon_dealer_${player_id}"></i> </div>\
+    <div id="token_shape_wrapper_${player_id}"><span class="tokenShapeIcon" style="color:#${player_color}" title="${TOKEN_SHAPE_TITLE}"><i class="fa ${player_color_token_shape} fa-stack-1x colorblind_shape_token_background"></i>  </span></div>\
 </div>';
 
 
@@ -100,15 +101,17 @@ var jstpl_player_board_details = '\<div class="player_panel_details" id="player_
 var jstpl_biddingcard = '<div class="cardOnBidding" id="biddingCardTpl" style="background-position: -${x}00% -${y}00%"></div>';
 
 //Template of 1 player token Question mark "?"
-var jstpl_player_token_question = '\<div class="player_token_zone token_question_${player_id}" id="${token_div_id}" card_id=${card_id}>\
+var jstpl_player_token_question = '\<div class="player_token_zone token_question_${player_id} token_question" id="${token_div_id}" card_id=${card_id}>\
         <span class="fa-stack icon_bid bid_wrapper_${player_id}" style="color:#${player_color}">\
+            <i class="fa ${colorblind_icon} fa-stack-1x colorblind_shape_token_background" ></i>\
           <i class="fa fa-circle fa-stack-1x fa-inverse"></i>\
           <i class="fa fa-question-circle fa-stack-1x "></i>\
         </span>\
     </div>';
 
-var jstpl_player_token_refuse = '\<div class="player_token_zone token_refuse_${player_id}" id="${token_div_id}" card_id=${card_id}>\
+var jstpl_player_token_refuse = '\<div class="player_token_zone token_refuse_${player_id} token_refuse" id="${token_div_id}" card_id=${card_id}>\
         <span class="fa-stack icon_bid bid_wrapper_${player_id}" style="color:#${player_color}">\
+            <i class="fa ${colorblind_icon} fa-stack-1x colorblind_shape_token_background" ></i>\
           <i class="fa fa-circle fa-stack-1x fa-inverse"></i>\
           <i class="fa fa-times-circle fa-stack-1x "></i>\
         </span>\

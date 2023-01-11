@@ -135,7 +135,7 @@
 .cardOnTable, .cardOnHand, .cardOnDeck, .cardOnBidding, .cardOnChoices, .cardOnHandRefused{
     /** Tip: how to make your cards looks beautiful :) */
     border-radius: 10px;
-    border: 1px black solid;
+    border: 1px black solid !important;/* important to remove Stock red border on selection*/
     box-shadow: 5px 5px 5px 0px rgba(0,0,255,0.4);
     background-size: 700% 500%;
 }
@@ -148,7 +148,18 @@
     height: 103px;
     background-image: url('img/cards.jpg');
 }
-
+.colorblind_shapes .cardColor-1{
+    /** RED SHAPE */ 
+    border-top-right-radius: 100%;
+}
+.colorblind_shapes .cardColor-2{
+    /** GREEN SHAPE*/ 
+    border-bottom-left-radius: 100%;
+}
+.colorblind_shapes .cardColor-3{
+    /** BLUE SHAPE*/ 
+    
+}
 
 #counterBestOffer{
     margin-left: 5px;
@@ -166,11 +177,14 @@
 }
 
 .stockitem_selected {
-	border: 3px solid yellow ! important;
+    outline: 3px solid yellow !important;
+}
+.colorblind_shapes .stockitem_selected.possibleCard { 
+    outline: 5px solid black !important;
 }
 
 .stockitem_joker{
-    border: 3px black dashed;
+    outline: 3px black dashed;
     box-shadow: 5px 5px 5px 0px rgba(255,0,0,0.7);
 }
 
@@ -197,7 +211,18 @@
     /*font-size: xx-large; */
 }
 
-
+.colorblind_shape_token_background {
+    font-size: 1.5em; 
+    text-shadow: 0 0 10px #fff;
+    /** Test with black because some token/card colors combination could be bad (example yellow token shape is very light on green card OR on back of card)*/ 
+    color: black;
+}
+html:not(.colorblind_shapes) .colorblind_shape_token_background { 
+    display: none;
+}
+.colorblind_shapes .colorblind_shape_token_background { 
+    display: block;
+}
 
 /* ------------------------------------------------------------------------------*/
 /*********************************** PLAYER PANEL ********************************/
@@ -219,7 +244,16 @@
     background-color: #847a6f;
 }
 
+html:not(.colorblind_shapes) .tokenShapeIcon { 
+    display: none;
+}
+.colorblind_shapes .tokenShapeIcon { 
+    display: block;
+}
 
+/* ------------------------------------------------------------------------------*/
+/*********************************** OTHERS **************************************/
+/* ------------------------------------------------------------------------------*/
 
 #scoreHelper{
     width: 157px;

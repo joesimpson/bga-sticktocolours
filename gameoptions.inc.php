@@ -55,4 +55,14 @@ $game_options = array(
 
 );
 
-
+$game_preferences = array(
+    100 => array(
+            'name' => totranslate('Colorblind Support'),
+            'needReload' => true, // after user changes this preference game interface would auto-reload
+            'values' => array(
+                    1 => array( 'name' => totranslate( 'Disabled' ), 'cssPref' => 'colorblind_off' ),
+                    3 => array( 'name' => totranslate( 'Shapes' ), 'cssPref' => 'colorblind_shapes' )
+            ),
+            'default' => 1
+    ),
+);
