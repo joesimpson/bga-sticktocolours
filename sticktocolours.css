@@ -161,18 +161,18 @@
     
 }
 
-#counterBestOffer{
+#counterBestOffer,#counterCurrentOffer{
     margin-left: 5px;
 }
 
 /** DEPRECATED because icon is moved (see class below)*/ 
-#bestOfferTokenIcon{
+#bestOfferTokenIcon, #currentOfferTokenIcon{
     position: relative;
     left: 120px;
     float: left;
     top: -7px;
 }
-#bestOfferTokenIconMoved{
+#bestOfferTokenIconMoved, #currentOfferTokenIconMoved{
     line-height: 1.8em;
 }
 

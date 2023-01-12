@@ -46,6 +46,7 @@ function (dojo, declare) {
             this.marketZones = {};
             this.handRefusedZones = {};
             this.counterBestOffer={};
+            this.counterCurrentOffer={};
             
             //this.biddingZone = new ebg.zone(); 
             
@@ -123,6 +124,12 @@ function (dojo, declare) {
             this.initTokensOnBiddingCard();
             this.displayTokensOnBiddingCard(gamedatas.biddingCardTokens);
             
+            //Update current player offer
+            this.counterCurrentOffer = new ebg.counter();
+            this.counterCurrentOffer.create("counterCurrentOffer");
+            this.initCurrentOffer(gamedatas.currentOffer);
+            this.updateCurrentOffer(gamedatas.currentOffer);
+            
             //Update best offer counter
             this.counterBestOffer = new ebg.counter();
             this.counterBestOffer.create("counterBestOffer");
@@ -173,6 +180,7 @@ function (dojo, declare) {
             case 'choosingCard':
                 this.enableAllPlayerPanels();
                 dojo.style( 'biddingBestOffer', 'display', 'none' );
+                this.updateCurrentOffer(0);
                 this.updatePossibleCards(args.args.possibleCardInMarket,"market");
                 break;
                 
@@ -607,9 +615,28 @@ function (dojo, declare) {
             });
             shape.addClass(colorblind_icon);
             
+            //Update player current offer
+            if(this.player_id == offer.player_id) {
+                this.updateCurrentOffer(offer.count);
+            }
+            
             dojo.style( 'biddingBestOffer', 'display', 'block' );
         },
         
+        initCurrentOffer: function(offer){
+            var token = { id: "0", player_id: this.player_id,  state:0};
+            var tokenDivId = this.formatToken(token);
+            if(tokenDivId!=null){
+                this.attachToNewParent(tokenDivId,"currentOfferTokenIcon");
+            }
+            //Move token from formatted div to targetted span in order to align with text :
+            var tokenSpanToKeep = dojo.query("#player_token_0_question>span")[0];
+            tokenSpanToKeep.id = "currentOfferTokenIconMoved";
+            dojo.place("currentOfferTokenIconMoved","currentOfferTokenIcon","replace"); 
+        },
+        updateCurrentOffer: function(offer){
+            this.counterCurrentOffer.toValue(offer);
+        },
         //Remove "?" tokens of given player on all market cards
         removeQuestionTokens: function(player_id){
             var token_questions = dojo.query("#market .token_question_"+player_id);

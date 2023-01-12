@@ -62,6 +62,7 @@ class view_sticktocolours_sticktocolours extends game_view
         $this->tpl['HAND_REFUSED'] = self::_("Hand refused cards");
         $this->tpl['BIDDING'] = self::_("Bidding target");
         $this->tpl['BEST_OFFER'] = self::_("Best offer :");
+        $this->tpl['CURRENT_OFFER'] = self::_("My offer :");
         $this->tpl['MY_HAND'] = self::_("My hand of cards");
         $this->tpl['JOKER_CHOICE_LABEL'] = self::_("Select a value for this Joker");
         

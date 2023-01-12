@@ -173,6 +173,8 @@ class StickToColours extends Table
         
         $result['bestOffer'] = self::getCurrentBestOffer();
         
+        $result['currentOffer'] = self::getCurrentOffer($current_player_id);
+        
         $result['handRefusedCards'] = self::dbCountHandRefusedCardsByPlayer();
   
         $result['notBiddingPlayers'] =  self::getCurrentNotBiddingPlayers();
@@ -439,7 +441,17 @@ These functions should have been API but they are not, just add them to your php
     function getCurrentBestOffer(){
         return array('count' =>self::getGameStateValue( 'current_trading_tokens') ,'player_id' =>self::getGameStateValue( 'current_trading_player_id') );
     }
-    
+    /**
+        Count already placed "?" tokens
+    */
+    function getCurrentOffer($player_id){
+        
+        $stateQuestion = 0;
+        $allAlreadyPlacedTokensAll = self::dbCountAllTokensByPlayerAndState();
+        //self::dump("bid()... allAlreadyPlacedTokensAll", $allAlreadyPlacedTokensAll);
+        $nbTokensAlreadyPlaced = array_key_exists($player_id,$allAlreadyPlacedTokensAll) && array_key_exists($stateQuestion,$allAlreadyPlacedTokensAll[$player_id])  ? $allAlreadyPlacedTokensAll[$player_id][$stateQuestion] : 0;
+        return $nbTokensAlreadyPlaced;
+    }
     
     function getNextBiddingPlayer(){
         self::trace("getNextBiddingPlayer() ...");
@@ -993,11 +1005,7 @@ These functions should have been API but they are not, just add them to your php
         $player_id = self::getActivePlayerId();
         
         $nbTokens = count($card_ids);
-        // Count already placed "?" tokens
-        $stateQuestion = 0;
-        $allAlreadyPlacedTokensAll = self::dbCountAllTokensByPlayerAndState();
-        //self::dump("bid()... allAlreadyPlacedTokensAll", $allAlreadyPlacedTokensAll);
-        $nbTokensAlreadyPlaced = array_key_exists($player_id,$allAlreadyPlacedTokensAll) && array_key_exists($stateQuestion,$allAlreadyPlacedTokensAll[$player_id])  ? $allAlreadyPlacedTokensAll[$player_id][$stateQuestion] : 0;
+        $nbTokensAlreadyPlaced = self::getCurrentOffer($player_id);;
         $playerNbTokens = $nbTokens + $nbTokensAlreadyPlaced;
         if($playerNbTokens == 0) throw new BgaUserException(self::_("You must bid with at least one card"));
         
