@@ -649,7 +649,7 @@ These functions should have been API but they are not, just add them to your php
             'color' => $card_color,
             'value_displayed' => $this->values_labels[$card_value],
             'color_displayed' => $this->card_types [$card_color] ['name'],
-            'card_id' => $card_id,
+            'card_id' => "$card_id",
             'isAutomatic' => $isAutomatic
         ) );
     }

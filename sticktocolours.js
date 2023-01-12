@@ -749,6 +749,9 @@ function (dojo, declare) {
                 if(isAutomatic){
                     this.playerHand.addToStockWithId( this.getCardUniqueIdType( color, value ), card_id,origin_placement );
                     this.addToStockShapeColor(this.playerHand,color,card_id);
+                    
+                    this.market.removeFromStockById(card_id);
+                    return;//STOP now to avoid ghost two animations
                 }
                 else {//IF card is THE BIDDING TARGET
                     this.playerHand.addToStockWithId( this.getCardUniqueIdType( color, value ), card_id );
@@ -769,9 +772,6 @@ function (dojo, declare) {
             if(isAutomatic){//IF card is automatically won from market stock
                 this.market.removeFromStockById(card_id);
             }
-            
-            
-            
         },
         
         playCardOnBidding: function(color, value, card_id){
