@@ -129,7 +129,7 @@ function (dojo, declare) {
             this.initBestOffer(gamedatas.bestOffer);
             this.updateBestOffer(gamedatas.bestOffer);
             
-            this.initPlayerHand(gamedatas.hand);
+            this.initPlayerHand(gamedatas.hand,gamedatas.jokers);
             
             //TODO JSA display all players Hand during the whole game and not only the end ?
             
@@ -332,7 +332,7 @@ function (dojo, declare) {
             this.handRefused.addItemType(this.back_type_id, this.back_type_id, g_gamethemeurl + this.cardsImage, this.back_type_id);
         },
         
-        initPlayerHand: function(hand ) 
+        initPlayerHand: function(hand, jokers ) 
         {
              //Player hand
             // new stock object for hand
@@ -355,6 +355,9 @@ function (dojo, declare) {
                 var card = hand[i];
                 var color = card.type;
                 var value = card.type_arg;                
+                if(jokers[card.id] != undefined ){
+                    value = jokers[card.id];
+                }
                 this.playerHand.addToStockWithId( this.getCardUniqueIdType( color, value ), card.id );
                 this.addToStockShapeColor(this.playerHand,color,card.id);
             }
@@ -853,9 +856,16 @@ function (dojo, declare) {
             dojo.query(".choiceJoker").style( 'display', 'none' );
             this.playerHand.unselectAll();
             
-            //TODO JSA IF response OK (wait notif) display choice above joker in hand
+            //IF response OK (wait notif) display choice above joker in hand (see below)
         },
-
+        replaceJoker: function(player_id,card_id,color,value)
+        {
+            if(this.player_id == player_id && this.playerHand.getItemById(card_id) !=null){
+                this.playerHand.removeFromStockById(card_id);
+                this.playerHand.addToStockWithId( this.getCardUniqueIdType( color, value ), card_id );
+            }
+        },
+        
         isJoker: function(type_id)
         {
             var colorAndValue = this.getCardColorValueFromIdType(type_id);
@@ -1084,6 +1094,7 @@ function (dojo, declare) {
             dojo.subscribe( 'bidWin', this, "notif_bidWin" );
             this.notifqueue.setSynchronous( 'bidWin', 1000 );
             dojo.subscribe( 'drawCard', this, "notif_drawCard" );
+            dojo.subscribe( 'jokerChosen', this, "notif_jokerChosen" );
             dojo.subscribe( 'playersHands', this, "notif_playersHands" );
             dojo.subscribe( 'newScores', this, "notif_newScores" );
         },  
@@ -1157,6 +1168,11 @@ function (dojo, declare) {
         notif_newDeal: function( notif )
         {
             this.updateDealer(notif.args.player_id);
+        },
+        
+        notif_jokerChosen: function( notif )
+        {
+            this.replaceJoker(notif.args.player_id,notif.args.card_id,notif.args.color,notif.args.value);
         },
 
         // Update players' scores

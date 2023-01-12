@@ -185,8 +185,8 @@ class StickToColours extends Table
                 $hands[$player_id] = $this->cards->getPlayerHand($player_id);
             }
             $result['hands'] = $hands;
-            $result['jokers'] = self::dbGetAllJokerValues();
         }
+        $result['jokers'] = self::dbGetAllJokerValues();
         
         return $result;
     }
@@ -1108,7 +1108,7 @@ These functions should have been API but they are not, just add them to your php
         if($newValue <1 || $newValue > 9) throw new BgaVisibleSystemException(("The value of the card must be between 1 and 9"));
         
         $jokerValue = self::dbGetJokerValue($card_id);
-        if(!is_null($jokerValue ) ) throw new BgaUserException(self::_("A value has already been chosen for this joker"));
+        if(!is_null($jokerValue ) ) throw new BgaVisibleSystemException(("A value has already been chosen for this joker"));
         
         $card_color = $card['type'];
         $color_displayed = $this->card_types [$card_color] ['name'];
