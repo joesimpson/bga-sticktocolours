@@ -571,7 +571,7 @@ function (dojo, declare) {
         },
         
         updateHandRefusedCards: function(handRefusedCards){
-            this.handRefused.removeAll();
+            this.handRefused.removeAllTo("deckView");
             for (var i in this.handRefusedZones){
                 //DELETE OLD ZONES (from old cards)
                 //this.handRefusedZones[i].removeAll();
