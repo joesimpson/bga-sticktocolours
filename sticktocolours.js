@@ -1140,8 +1140,7 @@ function (dojo, declare) {
         
         notif_drawCard: function( notif )
         {
-            //TODO JSA ANIMATION SLIDE FROM DECK
-            this.market.addToStockWithId( this.getCardUniqueIdType( notif.args.color, notif.args.value ), notif.args.card_id );
+            this.market.addToStockWithId( this.getCardUniqueIdType( notif.args.color, notif.args.value ), notif.args.card_id,"deckView" );
             this.addToStockShapeColor(this.market,notif.args.color,notif.args.card_id);
             this.initTokensOnCard(notif.args.card_id,"market");
             this.counterDeckSize.setValue(notif.args.deckSize);
