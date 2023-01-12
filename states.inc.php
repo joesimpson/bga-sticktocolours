@@ -55,12 +55,12 @@
 
 
  SETUP -> newRound -> choosingCard  -> playerTurn  ->  nextPlayer -> endRound -> assignJokers -> scoring -> END
-             ^ ^              |              ^              |            |
-             | |       (PASS) |              | (BID or PASS)|            |
-             | \------------nextRound        \--------------/            |
-             |                                                           |
-             |                                                           |
-             \-----------------------------------------------------------/
+         ^ ^    |          |              ^              |            |
+         | |    |   (PASS) |              | (BID or PASS)|            |
+         | \---nextRound---/              \--------------/            |
+         |                                                            |
+         |                                                            |
+         \------------------------------------------------------------/
 
 newRound : new phase (change dealer)
 choosingCard : dealer must choose a card and start bidding OR "pass" and we have a new round (new dealer)
@@ -95,7 +95,7 @@ $machinestates = array(
         "type" => "game",
         "action" => "stNewRound",
         "updateGameProgression" => true,
-        "transitions" => array( "next" => 10 )
+        "transitions" => array( "next" => 10 , "autoPass" => 11 )
     ),
 
     10 => array(

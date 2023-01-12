@@ -1246,6 +1246,21 @@ These functions should have been API but they are not, just add them to your php
             'player_name' => self::getActivePlayerName()
         ) );
         
+        //TEST IF DEALER has no option no play => the game may pass automatically to avoid time waste : (it could happen at the last turns of the game if 1 player puts their X token on all market cards )
+        $possibleCardInMarket = self::getPossibleCardsInMarket( $newDealer);
+        $autoPass = (count($possibleCardInMarket) == 0) ? true : false;
+        if($autoPass){
+                
+            self::notifyAllPlayers( "passChoiceAuto", clienttranslate( '${player_name} automatically passes' ), array(
+                'player_id' => $newDealer,
+                'player_name' => self::getActivePlayerName()
+            ) );
+            self::incStat(1,'passChoice_number',$newDealer);
+            
+            $this->gamestate->nextState( 'autoPass' );
+            return;
+        }
+        
         $this->gamestate->nextState( 'next' );
     }    
     function stNextRound()

@@ -132,6 +132,7 @@ $gameinfos = array(
 // Each paragraph must be wrapped with totranslate() for translation and should not contain html (plain text without formatting).
 // A good length for this text is between 100 and 150 words (about 6 to 9 lines on a standard display)
 'presentation' => array(
+    totranslate("Now with colorblind support !"),
     totranslate("Easy and fun card game for those who are not afraid of trading, bluffing and taking risks for the sake of the win. In the card game Стой На Своем ('Stick to Colours'), you collect sets of cards with figures by making bets with the cards you... don’t need! It’s the first auction where you can turn down offered bids in order to get what you need! A simple and compact game for adults and kids alike!"),
     totranslate("Each round first player picks a card from the market. This is the card he probably wants to get, and this is the card the players will start bidding for. After the card has been chosen, the players start bidding on it or they can pass and not take part in the auction. To place a bet a player puts a special token on a card he refuses, which means, that during the game he can never get this card. The one, whose bid is the highest, gets the card and leaves his refusal tokens on the cards he has refused during the round. All the other players take their tokens back. Then the game proceeds till the deck of cards and the market are empty. In the end of the game players score victory points for different sets (by colour or by value) on their hands."),
 //    ...
