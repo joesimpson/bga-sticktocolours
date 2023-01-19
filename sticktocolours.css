@@ -124,6 +124,9 @@
     margin-right: 20px;
     margin-left: 20px;
 }
+.spectatorMode #myhand_wrap {
+    display: none;
+}
 
 .playerhand{
     width: 90%;
@@ -174,6 +177,9 @@
 }
 #bestOfferTokenIconMoved, #currentOfferTokenIconMoved{
     line-height: 1.8em;
+}
+.spectatorMode #currentOfferText {
+    display: none;
 }
 
 .stockitem_selected {

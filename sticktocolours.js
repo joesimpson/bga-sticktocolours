@@ -624,6 +624,10 @@ function (dojo, declare) {
         },
         
         initCurrentOffer: function(offer){
+            if (this.isSpectator) { 
+                //Spectator has no offer ;) and above all has no player_id in gamedatas
+                return;
+            }
             var token = { id: "0", player_id: this.player_id,  state:0};
             var tokenDivId = this.formatToken(token);
             if(tokenDivId!=null){

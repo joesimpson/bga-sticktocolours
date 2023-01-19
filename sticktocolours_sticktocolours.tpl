@@ -38,7 +38,7 @@
         <h3>{BIDDING}</h3>
         <div id="biddingBestOffer">
             <h5>{BEST_OFFER}<span id="counterBestOffer"></span><span id="bestOfferTokenIcon"></span></h5>
-            <h5>{CURRENT_OFFER}<span id="counterCurrentOffer"></span><span id="currentOfferTokenIcon"></span></h5>
+            <h5 id="currentOfferText">{CURRENT_OFFER}<span id="counterCurrentOffer"></span><span id="currentOfferTokenIcon"></span></h5>
             
         </div>
         <div id="biddingCard">
