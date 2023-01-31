@@ -239,6 +239,11 @@ html:not(.colorblind_shapes) .colorblind_shape_token_background {
    float: left;
    padding: 2px;
 }
+.token_shape_wrapper{
+  float: right;
+  right: 50%;
+  position: relative;
+}
 .icon_handsize{
     color: black;
 }
@@ -255,6 +260,9 @@ html:not(.colorblind_shapes) .tokenShapeIcon {
 }
 .colorblind_shapes .tokenShapeIcon { 
     display: block;
+}
+.token_shape_wrapper .colorblind_shape_token_background{
+    position: relative;
 }
 
 /* ------------------------------------------------------------------------------*/
