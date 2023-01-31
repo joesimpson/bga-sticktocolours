@@ -244,11 +244,9 @@ html:not(.colorblind_shapes) .colorblind_shape_token_background {
   right: 50%;
   position: relative;
 }
-.icon_handsize{
+.icon_handsize, .hand_size_count, .icon_dealer{
     color: black;
-}
-.icon_dealer{
-    color: black;
+    font-size: 1.5em;
 }
 
 .player-board.roundedboxdisabled{

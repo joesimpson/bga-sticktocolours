@@ -92,7 +92,7 @@ var jstpl_some_game_item='<div class="my_game_item" id="my_game_item_${MY_ITEM_I
 
 */
 var jstpl_player_board_details = '\<div class="player_panel_details" id="player_panel_details_${player_id}">\
-    <div id="hand_size_wrapper_${player_id}" class="hand_size_wrapper"><i class="fa fa-hand-paper-o icon_handsize" id="icon_handsize_${player_id}"></i><span id="hand_size_${player_id}">0</span> </div>\
+    <div id="hand_size_wrapper_${player_id}" class="hand_size_wrapper"><i class="fa fa-hand-paper-o icon_handsize" id="icon_handsize_${player_id}"></i><span id="hand_size_${player_id}" class="hand_size_count">0</span> </div>\
     <div id="dealer_wrapper_${player_id}" class="dealer_wrapper"><i class="fa fa-bullseye icon_dealer" id="icon_dealer_${player_id}"></i> </div>\
     <div id="token_shape_wrapper_${player_id}" class="token_shape_wrapper"><span class="tokenShapeIcon" style="color:#${player_color}" title="${TOKEN_SHAPE_TITLE}"><i class="fa ${player_color_token_shape} fa-stack-1x colorblind_shape_token_background"></i>  </span></div>\
 </div>';
