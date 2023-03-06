@@ -652,6 +652,14 @@ These functions should have been API but they are not, just add them to your php
             self::incStat(1,'wonJoker_number',$winner_id);
         }
         
+        if(!$isAutomatic){
+            $bestOffer = self::getCurrentBestOffer();
+            $bestOfferCount = $bestOffer['count'];
+            self::notifyAllPlayers( "finalOffer", clienttranslate( 'The final offer is ${nb} !' ), array(
+                'nb' => $bestOfferCount,
+            ) );
+        }
+        
         // Notify all players about the card played
         self::notifyAllPlayers( "bidWin", clienttranslate( '${player_name} wins the card ${value_displayed} ${color_displayed}' ), array(
             'i18n' => array ('color_displayed','value_displayed' ),
