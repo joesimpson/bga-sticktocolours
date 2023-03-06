@@ -106,7 +106,7 @@ var jstpl_player_token_question = '\<div class="player_token_zone token_question
         <span class="fa-stack icon_bid bid_wrapper_${player_id}" style="color:#${player_color}">\
             <i class="fa ${colorblind_icon} fa-stack-1x colorblind_shape_token_background" ></i>\
           <i class="fa fa-circle fa-stack-1x fa-inverse"></i>\
-          <i class="fa fa-question-circle fa-stack-1x "></i>\
+          <i class="fa fa-question-circle fa-spin fa-stack-1x "></i>\
         </span>\
     </div>';
 

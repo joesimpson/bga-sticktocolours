@@ -217,6 +217,15 @@
     /*font-size: xx-large; */
 }
 
+
+.token_refuse{
+    filter: drop-shadow(0px 0px 3px black) brightness(100%);
+}
+
+.token_question{
+    filter: drop-shadow(0px 0px 3px black) brightness(100%);
+}
+
 .colorblind_shape_token_background {
     font-size: 1.5em; 
     text-shadow: 0 0 10px #fff;
