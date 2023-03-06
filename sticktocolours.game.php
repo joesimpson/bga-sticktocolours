@@ -736,26 +736,39 @@ These functions should have been API but they are not, just add them to your php
             
             $hand = $this->cards->getPlayerHand($player_id);
             
-            self::computeNominalCombinations($hand,$player_id,$player_name);
-            self::computeColorCombinations($hand,$player_id,$player_name);
+            self::computeNominalCombinations($hand,$player_id,$player_name, false);
+            self::computeColorCombinations($hand,$player_id,$player_name, false);
         }
     }
     
-    function computeNominalCombinations($hand,$player_id,$player_name){
+    /**
+    IF $isSilent => Compute score silently (no notif, no stat, no DB value set)
+    return : the total score for this player nominal combinations
+    */
+    function computeNominalCombinations($hand,$player_id,$player_name, $isSilent = false){
+        $scoreCounter = 0;
         //compute score for each  card combinations at nominal value
         for($k = 9; $k>= 1 ; $k--){//Starts with better combination to use Joker
-            $nbCombinations = self::countNominalCombinations($hand,$k ) ;
+            $nbCombinations = self::countNominalCombinations($hand,$k ,$isSilent) ;
             if( $nbCombinations >0 ){
                 //! look for a 2nd same combination ? (Ex : 1,1,1 and 1,1,1)
                 $score = 3 * $nbCombinations;
                 if($k>6){
                     $score = 6 * $nbCombinations;
+                }
+                self::trace("computeNominalCombinations($isSilent) : $score points for nominal combination of $k for player $player_id");
+                
+                $scoreCounter+= $score;
+                if( $isSilent) {
+                    continue;
+                }
+                
+                if($k>6){
                     self::incStat($nbCombinations,'scoreCombinationHigh_number',$player_id);
                 }
                 else {
                     self::incStat($nbCombinations,'scoreCombinationLow_number',$player_id);
                 }
-                self::trace("computeNominalCombinations() : $score points for nominal combination of $k for player $player_id");
                 self::notifyAllPlayers( "scoreThreeOfAKind", clienttranslate( '${player_name} scores ${points} points for completing combination of ${value_displayed}' ), array(
                     'i18n' => array("value_displayed"),
                     'player_id' => $player_id,
@@ -768,12 +781,13 @@ These functions should have been API but they are not, just add them to your php
                 self::dbIncScore($player_id,$score );
             }
         }
+        return $scoreCounter;
     }
     /*
     return true if hand contains a combination of 3 different colors of value $k,
            false otherwise
     */
-    function countNominalCombinations($hand,$k){
+    function countNominalCombinations($hand,$k, $isSilent = false){
         //owned colors with this "k" value
         $colors = array();
         
@@ -801,11 +815,16 @@ These functions should have been API but they are not, just add them to your php
             //self::dump("countNominalCombinations($k)...  result = $result for colors:",$colors);
             return $result;
         } 
-        self::trace("countNominalCombinations($k)...  result = 0");
+        self::trace("countNominalCombinations($k, $isSilent)...  result = 0");
         return 0;
     }
 
-    function computeColorCombinations($hand,$player_id,$player_name){
+    /**
+    IF $isSilent => Compute score silently (no notif, no stat, no DB value set)
+    return : the total score for this player color combinations
+    */
+    function computeColorCombinations($hand,$player_id,$player_name, $isSilent = false){
+        $scoreCounter = 0;
         //compute score for each  card combinations at color (SUITS)
         foreach($this->card_types as $color_id => $type){
             //MAX 3 different suits of the same color ( with 1,2,3,-  ,5,6,7,-, 9,1,2,3,4,5)
@@ -833,7 +852,12 @@ These functions should have been API but they are not, just add them to your php
             $score = 0;
             $score += 1 * self::countCardsInSuit($suit1); // 1 Point for each card in suit
             $score += 1 * self::countCardsInSuit($suit2); // 1 Point for each card in suit
-            self::trace("computeColorCombinations($player_name) : $score points for color $color_id combination for player $player_id");
+            self::trace("computeColorCombinations($player_name, $isSilent) : $score points for color $color_id combination for player $player_id");
+            $scoreCounter+= $score;
+            if( $isSilent) {
+                continue;
+            }
+            
             if($score>0){
                 self::notifyAllPlayers( "scoreSuit", clienttranslate( '${player_name} scores ${points} points for ${color_displayed} combinations' ), array(
                     'i18n' => array("color_displayed"),
@@ -855,6 +879,19 @@ These functions should have been API but they are not, just add them to your php
             
             self::dbIncScore($player_id,$score );  
         }
+        return $scoreCounter;
+    }
+    
+    /** 
+    Compute score silently (no notif, no stat, no DB value set)
+    */
+    function getCurrentScore($player_id){
+        
+        $hand = $this->cards->getPlayerHand($player_id);
+        $score = 0;
+        $score += self::computeNominalCombinations($hand,$player_id,'', true);
+        $score += self::computeColorCombinations($hand,$player_id,'',true);
+        return $score;
     }
     
     /**
@@ -1162,24 +1199,44 @@ These functions should have been API but they are not, just add them to your php
 
     function argChoosingCard(){
         $activePlayer = self::getActivePlayerId();
+        $players = self::loadPlayersBasicInfos();
+        
+        $privateDatas = array ();
+        foreach($players as $player_id => $player){
+            $privateDatas[$player_id] = array(
+                'currentScore' => self::getCurrentScore( $player_id)
+            );
+        }
+        
         // return values:
         return array(
-            'possibleCardInMarket' => self::getPossibleCardsInMarket( $activePlayer)
+            'possibleCardInMarket' => self::getPossibleCardsInMarket( $activePlayer),
+            '_private' => $privateDatas
         );
     }
     
     function argPlayerTurn(){
         $activePlayer = self::getActivePlayerId();
+        $players = self::loadPlayersBasicInfos();
+        
+        $privateDatas = array ();
+        /*
+        $privateDatas['active'] =  array(
+                    'possibleCardInHand' => self::getPossibleCardsInHand( $activePlayer)
+                );
+        */
+        foreach($players as $player_id => $player){
+            $privateDatas[$player_id] = array(
+                'possibleCardInHand' => ($player_id == $activePlayer) ? self::getPossibleCardsInHand( $player_id) : null,
+                'currentScore' => self::getCurrentScore( $player_id)
+            );
+        }
         // return values:
         return array(
             'currentBestOffer' => self::getCurrentBestOffer(),
             'notBiddingPlayers' => self::getCurrentNotBiddingPlayers(),
             'possibleCardInMarket' => self::getPossibleCardsInMarket( $activePlayer),
-            '_private' => array(
-                'active' => array(
-                    'possibleCardInHand' => self::getPossibleCardsInHand( $activePlayer)
-                )
-            )
+            '_private' => $privateDatas,
         );
     }
     
@@ -1190,7 +1247,10 @@ These functions should have been API but they are not, just add them to your php
         $jokersToAssign = array();
         $players = self::loadPlayersBasicInfos();
         foreach($players as $player_id => $player){
-            $jokersToAssign[$player_id] = array( 'possibleCardInHand' => self::getPossibleCardsInHand( $player_id, 10) );
+            $jokersToAssign[$player_id] = array( 
+                'possibleCardInHand' => self::getPossibleCardsInHand( $player_id, 10),
+                'currentScore' => self::getCurrentScore( $player_id),
+                );
         }
         
         return array(

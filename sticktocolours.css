@@ -233,6 +233,10 @@ html:not(.colorblind_shapes) .colorblind_shape_token_background {
 /* ------------------------------------------------------------------------------*/
 /*********************************** PLAYER PANEL ********************************/
 /* ------------------------------------------------------------------------------*/
+.player_score_value{
+    visibility: hidden;
+}
+
 .hand_size_wrapper, .dealer_wrapper{
     /** width to organize differents icons + displaying tooltips  */
    width: max-content;

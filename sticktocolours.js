@@ -150,6 +150,7 @@ function (dojo, declare) {
             if(gamedatas.gamestate.id == 99){//IF USER REFRESH AT THE END
                 this.hideGameBoard();
                 this.displayPlayerHands(gamedatas.hands,gamedatas.jokers);
+                 dojo.query(".player_score_value").style("visibility", "visible");
             }
 
             this.addActionButton( 'button_scoreHelp', _('Score helper'), 'onScoreHelp', 'player_boards', false, 'blue'); 
@@ -182,6 +183,11 @@ function (dojo, declare) {
                 dojo.style( 'biddingBestOffer', 'display', 'none' );
                 this.updateCurrentOffer(0);
                 this.updatePossibleCards(args.args.possibleCardInMarket,"market");
+                
+                if(args.args._private !=undefined){
+                    //Score for THIS player ONLY
+                    this.updatePlayerScore(this.player_id,args.args._private.currentScore);
+                }
                 break;
                 
             case 'playerTurn':
@@ -190,10 +196,16 @@ function (dojo, declare) {
                 this.playerHand.setSelectionMode(2);
                 this.updatePossibleCards(args.args.possibleCardInMarket,"market");
                 if(args.args._private !=undefined){
-                    this.updatePossibleCards(args.args._private.possibleCardInHand,"hand");
-                } else {
-                    this.updatePossibleCards([],"hand");
-                }
+                    //Score for THIS player ONLY
+                    this.updatePlayerScore(this.player_id,args.args._private.currentScore);
+                    if(args.args._private.possibleCardInHand!=undefined){
+                        this.updatePossibleCards(args.args._private.possibleCardInHand,"hand");
+                    }
+                    else {
+                        this.updatePossibleCards([],"hand");
+                    }
+                } 
+                
                 break;
                 
             case 'assignJokers':
@@ -201,10 +213,15 @@ function (dojo, declare) {
                 //simple selection on joker assignment
                 this.playerHand.setSelectionMode(1);
                 if(args.args._private !=undefined){
-                    this.updatePossibleCards(args.args._private.possibleCardInHand,"hand");
-                } else {
-                    this.updatePossibleCards([],"hand");
-                }
+                    //Score for THIS player ONLY
+                    this.updatePlayerScore(this.player_id,args.args._private.currentScore);
+                    if(args.args._private.possibleCardInHand!=undefined){
+                        this.updatePossibleCards(args.args._private.possibleCardInHand,"hand");
+                    }
+                    else {
+                        this.updatePossibleCards([],"hand");
+                    }
+                } 
                 this.hideGameBoardActionZone();
                 break;
            
@@ -854,6 +871,13 @@ function (dojo, declare) {
             this.displayTokensOnCard( newMarketTokens);
         },
 
+        updatePlayerScore: function(player_id, score){
+            //console.log("updatePlayerScore",player_id, score);
+            //Counter instance for score
+            this.scoreCtrl[player_id].setValue(  score  );
+            dojo.query("#player_score_"+player_id).style("visibility", "visible");
+        },
+        
         updateDealer: function(dealerId){
             dojo.query(".dealer_wrapper").style( 'display', 'none' );
             dojo.query("#dealer_wrapper_"+dealerId).style( 'display', 'block' );
@@ -1212,8 +1236,7 @@ function (dojo, declare) {
             //console.log( 'notif_newScores',notif );     
                     
             for(var player_id  in notif.args.newScores){
-                //Counter instance for score
-                this.scoreCtrl[player_id].toValue(  notif.args.newScores[player_id]  );
+                this.updatePlayerScore(player_id,notif.args.newScores[player_id] );
             }
         },  
         
