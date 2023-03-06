@@ -289,13 +289,24 @@ function (dojo, declare) {
             this.counterDeckSize.create("deck_size");
             this.counterDeckSize.setValue(deckSize);
             
-            this.deckView = new ebg.stock();            
-            this.deckView.create( this, $('deckView'), this.cardwidth, this.cardheight );
-            this.deckView.image_items_per_row  = this.image_items_per_row;
-            this.deckView.extraClasses="cardOnDeck";
-            this.deckView.setSelectionMode(0);// NO SELECTION
-            this.deckView.addItemType(this.back_type_id, this.back_type_id, g_gamethemeurl + this.cardsImage, this.back_type_id);
-            this.deckView.addToStockWithId( this.back_type_id, 0 );
+            this.deckView = new ebg.stock();    
+            let stock = this.deckView;        
+            stock.create( this, $('deckView'), this.cardwidth, this.cardheight );
+            stock.image_items_per_row  = this.image_items_per_row;
+            stock.extraClasses="cardOnDeck";
+            stock.setSelectionMode(0);// NO SELECTION
+            stock.addItemType(this.back_type_id, this.back_type_id, g_gamethemeurl + this.cardsImage, this.back_type_id);
+            
+            stock.vertical_overlap = 95; // overlap
+            stock.item_margin = 0; // has to be 0 if using overlap
+            stock.horizontal_overlap  = -1; // current bug in stock - this is needed to enable z-index on overlapping items 
+            stock.autowidth = true; 
+            stock.use_vertical_overlap_as_offset = false; // this is to use normal vertical_overlap 
+            
+            for(let i=0; i <=5; i++){ // LOOP to display several times and make the "deck" style
+                stock.addToStockWithId( this.back_type_id, i );
+            }
+            
         },
         
         initMarket: function(market ) 
