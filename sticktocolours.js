@@ -675,6 +675,21 @@ function (dojo, declare) {
             }
         },
         
+        blinkToken: function(tokenID){
+            let myAnimation = dojo.fx.chain([
+                        dojo.fadeOut({ node: tokenID }),
+                        dojo.fadeIn({ node: tokenID }),
+                        dojo.fadeOut({ node: tokenID,
+                            onEnd: function( node ) {
+                                dojo.removeClass( node, [ 'stc_visible_node', 'stc_hidden_node' ] );
+                                dojo.addClass( node, 'stc_visible_node' );
+                            } 
+                        }),
+                        dojo.fadeIn({ node: tokenID })
+                    ]);
+                    myAnimation.play();
+        },
+        
         turnOverQuestionTokens: function(player_id){
             var token_questions = dojo.query("#market .token_question_"+player_id);
             if(token_questions.length ==0 ) return;
@@ -684,6 +699,9 @@ function (dojo, declare) {
                     var token_id = token_question.id.match("player_token_(\\d*)_question")[1];
                     //Delete Question and update zone :
                     var card_id = dojo.attr( token_question,"card_id");
+                    //BLINK token before removing :
+                    this.blinkToken("player_token_"+token_id+"_question");
+                    
                     this.marketZones[card_id].removeFromZone( token_question.id, true, null );
                     
                     var refuseToken = {id: token_id , card_id: card_id, player_id: player_id, state: 1};

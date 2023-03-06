@@ -73,6 +73,12 @@
     border-radius: 20px;
 }
 
+.stc_visible_node{
+    visibility: visible;
+}
+.stc_hidden_node{
+    visibility: hidden;
+}
 
 /* ------------------------------------------------------------------------------*/
 /*********************************** CENTRAL BOARD *******************************/
