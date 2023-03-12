@@ -1193,12 +1193,17 @@ function (dojo, declare) {
         notif_handRefusedCards: function( notif )
         {
             this.updateHandRefusedCards(notif.args.handRefusedCards);
-            
+            //DECREASE hand size :
+            this.counterHandsSize[notif.args.player_id].incValue(- notif.args.number );
         },  
         notif_bidCardFromHand: function( notif )
         {
             // Remove card from hand (only the active player is notified)
             this.playerHand.removeFromStockById(notif.args.card_id);
+            
+            // DON't DO because current player already receives the info from previous notif
+            //  //DECREASE hand size :
+            //  this.counterHandsSize[this.player_id].incValue(-1);
         },  
         notif_bestOffer: function( notif )
         {
