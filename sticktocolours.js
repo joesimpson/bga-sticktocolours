@@ -300,6 +300,10 @@ function (dojo, declare) {
             script.
         
         */
+        hideDeck: function( ) 
+        {
+            dojo.query('#deckView').style("visibility","hidden");
+        },
         initDeck: function(deckSize ) 
         {
             this.counterDeckSize = new ebg.counter();
@@ -313,6 +317,10 @@ function (dojo, declare) {
             this.deckView.setSelectionMode(0);// NO SELECTION
             this.deckView.addItemType(this.back_type_id, this.back_type_id, g_gamethemeurl + this.cardsImage, this.back_type_id);
             this.deckView.addToStockWithId( this.back_type_id, 0 );
+            
+            if(deckSize ==0){
+                this.hideDeck();
+            }
         },
         
         initMarket: function(market ) 
@@ -1233,6 +1241,9 @@ function (dojo, declare) {
             this.addToStockShapeColor(this.market,notif.args.color,notif.args.card_id);
             this.initTokensOnCard(notif.args.card_id,"market");
             this.counterDeckSize.setValue(notif.args.deckSize);
+            if(notif.args.deckSize ==0){
+                this.hideDeck();
+            }
         },  
         notif_marketCardChosen: function( notif )
         {
