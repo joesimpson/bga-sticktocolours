@@ -1180,6 +1180,13 @@ These functions should have been API but they are not, just add them to your php
             'color_displayed' => $this->card_types [$card_color] ['name'],
             'card_id' => $card_id
         ) );
+    
+        //-------------- IF WE WANT TO DISPLAY CURRENT SCORE AFTER EACH JOKER ------------------------
+        self::dbRefreshJokersValues();
+        self::notifyPlayer($player_id, "updatedScore", '', array(
+            'currentScore' => self::getCurrentScore( $player_id)
+        ) );   
+        //-------------------------------------------------------------------------------------------  
         
         $unassignedJokers = self::dbGetUnassignedJokers($player_id);
         $stillJokers = count($unassignedJokers)>0;

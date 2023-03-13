@@ -383,6 +383,8 @@ function (dojo, declare) {
                     this.playerHand.addItemType(card_type_id, weight, g_gamethemeurl + this.cardsImage, card_type_id);
                 } 
             }
+            this.playerHand.onItemCreate = dojo.hitch( this, 'setupPlayerHandNewCard',jokers );
+            
             //Add items to the stock :
             for ( var i in hand) {
                 var card = hand[i];
@@ -762,7 +764,7 @@ function (dojo, declare) {
             var tokens = card_id.split("_");
             var bdId = tokens[tokens.length-1];
 
-            if(this.isJoker(card_type_id) || jokers[bdId] != undefined ){
+            if( /*this.isJoker(card_type_id) ||*/ jokers[bdId] != undefined ){
                 this.addTooltip( card_div.id, _("This is the joker card replacement"), '' );
                 dojo.addClass( card_div.id, 'stockitem_joker' );
             }
@@ -1176,6 +1178,7 @@ function (dojo, declare) {
             this.notifqueue.setSynchronous( 'bidWin', 1000 );
             dojo.subscribe( 'drawCard', this, "notif_drawCard" );
             dojo.subscribe( 'jokerChosen', this, "notif_jokerChosen" );
+            dojo.subscribe( 'updatedScore', this, "notif_updatedScore" );
             dojo.subscribe( 'playersHands', this, "notif_playersHands" );
             dojo.subscribe( 'newScores', this, "notif_newScores" );
         },  
@@ -1262,6 +1265,12 @@ function (dojo, declare) {
         notif_jokerChosen: function( notif )
         {
             this.replaceJoker(notif.args.player_id,notif.args.card_id,notif.args.color,notif.args.value);
+        },
+        
+        // PRIVATE SCORE FOR CURRENT PLAYER ONLY
+        notif_updatedScore: function( notif )
+        {
+            this.updatePlayerScore(this.player_id,notif.args.currentScore);
         },
 
         // Update players' scores
