@@ -173,7 +173,7 @@ class StickToColours extends Table
         
         $result['bestOffer'] = self::getCurrentBestOffer();
         
-        $result['currentOffer'] = self::getCurrentOffer($current_player_id);
+        $result['currentOffer'] = self::getCurrentOffer($current_player_id)['count'];
         
         $result['handRefusedCards'] = self::dbCountHandRefusedCardsByPlayer();
   
@@ -439,7 +439,23 @@ These functions should have been API but they are not, just add them to your php
     }
     
     function getCurrentBestOffer(){
-        return array('count' =>self::getGameStateValue( 'current_trading_tokens') ,'player_id' =>self::getGameStateValue( 'current_trading_player_id') );
+        $stateQuestion = 0;
+        $current_trading_tokens = self::getGameStateValue( 'current_trading_tokens');
+        $current_trading_player_id = self::getGameStateValue( 'current_trading_player_id');
+        
+        $tokens = self::dbGetAllTokens("market");
+        $current_cards_ids = array();
+        foreach($tokens as $token){
+            if($token['player_id'] == $current_trading_player_id && $token['state'] == $stateQuestion){
+                $current_cards_ids[] = $token['card_id'];
+            }
+        }
+        
+        return array('count' =>$current_trading_tokens ,
+            'player_id' => $current_trading_player_id,
+            //only market temp "?" tokens here
+            'market_cards_ids' => $current_cards_ids,
+            );
     }
     /**
         Count already placed "?" tokens
@@ -450,7 +466,20 @@ These functions should have been API but they are not, just add them to your php
         $allAlreadyPlacedTokensAll = self::dbCountAllTokensByPlayerAndState();
         //self::dump("bid()... allAlreadyPlacedTokensAll", $allAlreadyPlacedTokensAll);
         $nbTokensAlreadyPlaced = array_key_exists($player_id,$allAlreadyPlacedTokensAll) && array_key_exists($stateQuestion,$allAlreadyPlacedTokensAll[$player_id])  ? $allAlreadyPlacedTokensAll[$player_id][$stateQuestion] : 0;
-        return $nbTokensAlreadyPlaced;
+        
+        $market_cards_ids = array();
+        $market_tokens = self::dbGetAllTokens("market");
+        foreach($market_tokens as $token){
+            if($token['player_id'] == $player_id && $token['state'] == $stateQuestion) {
+                $market_cards_ids[] = $token['card_id'];
+            }
+        }
+        
+        return array( 
+            'count' => $nbTokensAlreadyPlaced,
+            //only market temp "?" tokens here
+            'market_cards_ids' => $market_cards_ids,
+        );
     }
     
     function getNextBiddingPlayer(){
@@ -1050,13 +1079,20 @@ These functions should have been API but they are not, just add them to your php
         $player_id = self::getActivePlayerId();
         
         $nbTokens = count($card_ids);
-        $nbTokensAlreadyPlaced = self::getCurrentOffer($player_id);;
+        $currentOffer = self::getCurrentOffer($player_id);
+        $nbTokensAlreadyPlaced = $currentOffer['count'];
         $playerNbTokens = $nbTokens + $nbTokensAlreadyPlaced;
         if($playerNbTokens == 0) throw new BgaUserException(self::_("You must bid with at least one card"));
         
         $lastNbTokens = self::getGameStateValue( 'current_trading_tokens' );
         self::trace("bid()...  $nbTokens new tokens is not enough for  $player_id with already $nbTokensAlreadyPlaced tokens because previous player bids with $lastNbTokens tokens.");
         if($lastNbTokens >= $playerNbTokens) throw new BgaUserException(self::_("You must bid with more cards than the previous player"));
+        
+        // CHECK THAT PLAYER Bids with the same cards that previous player, not counting previously placed tokens :
+        $bestOffer = self::getCurrentBestOffer();
+        $missingBids = array_diff($bestOffer['market_cards_ids'],$card_ids );
+        $missingBids = array_diff($missingBids,$currentOffer['market_cards_ids'] );
+        if( count($missingBids) > 0) throw new BgaUserException(self::_("You must bid with the same cards than the previous player"));
         
         $numberHand = 0;
         
@@ -1117,7 +1153,9 @@ These functions should have been API but they are not, just add them to your php
                 ) );        
                 self::notifyAllPlayers( "newTokens", '', array(
                     'token' => $token,
-                ) );   
+                ) );
+                
+                //TODO JSA AUTO PASS PLAYERS WITH "X" TOKENS on this card, because they can't overbid !
             }
 
         }
