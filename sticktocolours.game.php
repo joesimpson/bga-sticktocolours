@@ -87,7 +87,7 @@ class StickToColours extends Table
                 $dealer = $player_id;
             }
         }
-        $sql .= implode( $values, ',' );
+        $sql .= implode( ',',$values );
         self::DbQuery( $sql );
         self::reattributeColorsBasedOnPreferences( $players, $gameinfos['player_colors'] );
         self::reloadPlayersBasicInfos();
